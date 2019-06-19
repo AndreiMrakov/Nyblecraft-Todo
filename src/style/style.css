@@ -1,0 +1,52 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.delete-note::after {
+    content: '\f00d';
+    cursor: pointer;
+    font-family: "fontawesome", sans-serif;
+    color: red;
+    padding-left: 10px;
+    vertical-align: middle;
+}
+
+.edit-note::after {
+    content: '\f044';
+    cursor: pointer;
+    font-family: "fontawesome", sans-serif;
+    color: red;
+    padding-left: 10px;
+    vertical-align: middle;
+}
+
+.save-note::after {
+    content: '\f0c7';
+    cursor: pointer;
+    font-family: "fontawesome", sans-serif;
+    color: red;
+    padding-left: 10px;
+    vertical-align: middle;
+}
+
+@font-face {
+    font-family: "fontawesome";
+    font-style: normal;
+    font-weight: 400;
+    font-display: auto;
+    src: url(font/fa-regular-400.eot);
+    src: url(font/fa-regular-400.eot?#iefix) format("embedded-opentype"),
+    url(font/fa-regular-400.woff2) format("woff2"),
+    url(font/fa-regular-400.woff) format("woff"),
+    url(font/fa-regular-400.ttf) format("truetype")
+}
