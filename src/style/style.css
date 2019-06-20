@@ -39,6 +39,19 @@ code {
     vertical-align: middle;
 }
 
+.tags-container {
+    display: flex;
+}
+
+.tag-name {
+    padding: 10px;
+}
+
+.tag-name:hover {
+    cursor: pointer;
+    background: yellow;
+}
+
 @font-face {
     font-family: "fontawesome";
     font-style: normal;

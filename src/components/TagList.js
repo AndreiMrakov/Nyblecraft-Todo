@@ -1,4 +1,5 @@
 import React from 'react';
+import SingleTag from "./SingleTag";
 
 class TagList extends React.Component {
     constructor(props) {
@@ -8,7 +9,8 @@ class TagList extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className='tags-container'>
+                {this.props.tags.map(tag => tag.text && <SingleTag key={tag.text} tag={tag}/>)}
             </div>
         );
     }

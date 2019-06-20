@@ -2,58 +2,63 @@ import React from 'react';
 import AddNote from "./AddNote";
 import TagList from "./TagList";
 import NoteList from "./NoteList";
+import AddTag from "./AddTag";
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             notes: [],
-            hashs: [],
+            filteredNotes: [],
+            tags: [],
             id: 0,
         };
     }
 
     componentWillMount() {
-        // this.loadFile(localStorage);
+        this.setState({filteredNotes: this.filterNotes()});
     }
 
-    loadFile = () => {
-
+    filterNotes = (tag = null) => {
+        return tag !== null ? [...this.state.notes].filter(note => note.tags.some(noteTag => tag.includes(noteTag))) : this.state.notes;
     };
 
     newNote = (note) => {
-        let noteHash = note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) !== null ? note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) : null;
+        console.clear();
+        let noteTags = note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) !== null ? note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) : null;
         let notesCopy = [...this.state.notes];
         let newNote = {
             id: this.state.id + 1,
             text: note,
-            hash: noteHash,
+            tags: noteTags,
         };
         notesCopy.push(newNote);
 
-        if(noteHash){
-            let hashsCopy = [...this.state.hashs];
-            if(!hashsCopy.some(hash => hash.text === noteHash)){
-                let newHash = {
-                    owners: [].push(newNote.id),
-                    text: noteHash,
-                };
-                hashsCopy.push(newHash);
-            } else {
-                let hashOwnerCopy = [...hashsCopy[hashsCopy.findIndex(hash => hash.text === noteHash)].owners];
-                // console.log(hashsCopy.findIndex(hash => hash.text === noteHash));
-                hashOwnerCopy.push(newNote.id);
-                let newHash = {
-                    owners: hashOwnerCopy,
-                    text: noteHash,
-                };
-                hashsCopy.push(newHash);
+        if (noteTags !== null) {
+            let tagsCopy = [...this.state.tags];
+            for (let i = 0; i < noteTags.length; i++) {
+                if (!tagsCopy.length) {
+                    let newTag = {
+                        owners: [newNote.id],
+                        text: noteTags[i],
+                    };
+                    tagsCopy.push(newTag);
+                } else {
+                    for (let j = 0; j < tagsCopy.length; j++) {
+                        if (noteTags[i] === tagsCopy[j].text && !tagsCopy[j].owners.includes(newNote.id)) {
+                            tagsCopy[j].owners = [...tagsCopy[j].owners, newNote.id];
+                        } else if (!tagsCopy.some(tag => tag.text === noteTags[i])) {
+                            let newTag = {
+                                owners: [newNote.id],
+                                text: noteTags[i],
+                            };
+                            tagsCopy.push(newTag);
+                        }
+                    }
+                }
             }
-            this.setState({hashs: hashsCopy});
-            console.log(hashsCopy.findIndex(hash => hash.text === noteHash[0]));
-
+            this.setState({tags: tagsCopy});
         }
-
         this.setState({notes: notesCopy, id: this.state.id + 1});
     };
 
@@ -61,7 +66,7 @@ class App extends React.Component {
         let notesCopy = [...this.state.notes];
         notesCopy.forEach((note, index) => {
             if (note.id === id) {
-                notesCopy.splice(index, 1, 0);
+                notesCopy.splice(index, 1);
                 this.setState({notes: notesCopy});
             }
         });
@@ -69,7 +74,7 @@ class App extends React.Component {
 
     editNote = (id, text) => {
         let notesCopy = [...this.state.notes];
-        notesCopy.forEach((note, index) => {
+        notesCopy.forEach(note => {
             if (note.id === id) {
                 note.text = text;
                 this.setState({notes: notesCopy});
@@ -81,7 +86,8 @@ class App extends React.Component {
         return (
             <div className='app-container'>
                 <AddNote pusher={this.newNote}/>
-                <TagList/>
+                <AddTag pusher={this.newTag}/>
+                <TagList tags={this.state.tags}/>
                 <NoteList notes={this.state.notes} delete={this.deleteNote} update={this.editNote}/>
             </div>
         );
