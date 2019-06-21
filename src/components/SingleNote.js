@@ -10,15 +10,12 @@ class SingleNote extends React.Component {
         };
     }
 
-    componentWillMount() {
-        this.setState({note: this.props.note, newText: this.props.note.text});
-    }
-
+    componentWillMount = () => this.setState({note: this.props.note, newText: this.props.note.text});
     deleteNote = () => this.props.delete(this.props.note.id);
-    editNote = () => this.setState({editMode: !this.state.editMode});
+    editModeChanger = () => this.setState({editMode: !this.state.editMode});
     updateNote = () => {
         this.props.update(this.state.note.id, this.state.newText);
-        this.editNote();
+        this.editModeChanger();
     };
     handleChange = (e) => this.setState({newText: e.target.value});
 
@@ -26,8 +23,8 @@ class SingleNote extends React.Component {
         return (
             <div className='note-container'>
                 {!this.state.editMode && <span className='note-text'>{this.props.note.text}</span>}
-                {!this.state.editMode && <span className='edit-note' onClick={this.editNote}/>}
-                {this.state.editMode && <textarea onChange={this.handleChange} value={this.state.newText}/>}
+                {!this.state.editMode && <span className='edit-note' onClick={this.editModeChanger}/>}
+                {this.state.editMode && <textarea onChange={this.handleChange} value={this.state.newText} />}
                 {this.state.editMode && <span className='save-note' onClick={this.updateNote}/>}
                 <span className='delete-note' onClick={this.deleteNote}/>
             </div>

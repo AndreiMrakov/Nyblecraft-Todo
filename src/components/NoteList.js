@@ -10,6 +10,7 @@ class NoteList extends React.Component {
     render() {
         return (
             <div className='notes-container'>
+                {this.props.notes[0] && <span>Notes:</span>}
                 {this.props.notes.map(note =>
                     <SingleNote key={note.id}
                                 note={note}

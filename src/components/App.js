@@ -16,15 +16,14 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-        this.setState({filteredNotes: this.filterNotes()});
+        // this.setState({filteredNotes: this.filterNotes()});
     }
 
-    filterNotes = (tag = null) => {
-        return tag !== null ? [...this.state.notes].filter(note => note.tags.some(noteTag => tag.includes(noteTag))) : this.state.notes;
-    };
+    // filterNotes = (tag = null) => {
+    //     return tag !== null ? [...this.state.notes].filter(note => note.tags.some(noteTag => tag.includes(noteTag))) : this.state.notes;
+    // };
 
     newNote = (note) => {
-        console.clear();
         let noteTags = note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) !== null ? note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) : null;
         let notesCopy = [...this.state.notes];
         let newNote = {
@@ -82,13 +81,48 @@ class App extends React.Component {
         });
     };
 
+    newTag = (tags) => {
+        let newTags = [];
+        tags.forEach(tag => {
+            let tagsCopy = [...this.state.tags].map(tag => tag.text);
+           if(!tagsCopy.includes(tag)){
+               let newTag = {
+                   text: tag,
+                   owners: [],
+               };
+               newTags = [...newTags, newTag];
+           }
+        });
+        this.setState({tags: [...this.state.tags, ...newTags]});
+    };
+
+    deleteTag = (name) => {
+        let tagsCopy = [...this.state.tags];
+        tagsCopy.forEach((tag, index, self) => {
+            if (tag.text === name) {
+                self.splice(index, 1);
+                this.setState({tags: tagsCopy});
+            }
+        });
+    };
+
+    editTag = (oldText, newText) => {
+        let tagsCopy = [...this.state.tags];
+        tagsCopy.forEach(tag => {
+            if (tag.text === oldText) {
+                tag.text = newText;
+                this.setState({tags: tagsCopy});
+            }
+        });
+    };
+
     render() {
         return (
             <div className='app-container'>
                 <AddNote pusher={this.newNote}/>
                 <AddTag pusher={this.newTag}/>
-                <TagList tags={this.state.tags}/>
-                <NoteList notes={this.state.notes} delete={this.deleteNote} update={this.editNote}/>
+                <TagList tags={this.state.tags} update={this.editTag} delete={this.deleteTag}/>
+                <NoteList notes={this.state.notes} update={this.editNote} delete={this.deleteNote} />
             </div>
         );
     }

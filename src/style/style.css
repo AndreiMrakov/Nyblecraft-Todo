@@ -12,8 +12,7 @@ code {
     monospace;
 }
 
-.delete-note::after {
-    content: '\f00d';
+.edit-note::after, .save-note::after, .delete-note::after, .edit-tag::after, .save-tag::after, .delete-tag::after {
     cursor: pointer;
     font-family: "fontawesome", sans-serif;
     color: red;
@@ -21,26 +20,21 @@ code {
     vertical-align: middle;
 }
 
-.edit-note::after {
+.edit-note::after, .edit-tag::after {
     content: '\f044';
-    cursor: pointer;
-    font-family: "fontawesome", sans-serif;
-    color: red;
-    padding-left: 10px;
-    vertical-align: middle;
 }
 
-.save-note::after {
+.save-note::after, .save-tag::after {
     content: '\f0c7';
-    cursor: pointer;
-    font-family: "fontawesome", sans-serif;
-    color: red;
-    padding-left: 10px;
-    vertical-align: middle;
+}
+
+.delete-note::after, .delete-tag::after  {
+    content: '\f00d';
 }
 
 .tags-container {
     display: flex;
+    align-items: center;
 }
 
 .tag-name {

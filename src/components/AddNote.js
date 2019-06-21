@@ -5,28 +5,25 @@ class AddNote extends React.Component {
         super(props);
         this.state = {
             text: '',
-
         };
-        this.handleChange = this.handleChange.bind(this);
-        this.addNote = this.addNote.bind(this);
     }
 
-    addNote(e) {
+    addNote = (e) => {
         e.preventDefault();
         this.props.pusher(this.state.text);
         this.setState({text: ''});
-    }
+    };
 
-    handleChange(e) {
+    handleChange = (e) =>  {
         this.setState({text: e.target.value});
-    }
+    };
 
     render() {
         return (
             <div>
                 <form onSubmit={this.addNote}>
-                    <input type="text" onChange={this.handleChange} value={this.state.text}/>
-                    <button>Add</button>
+                    <input type="text" onChange={this.handleChange} value={this.state.text} required/>
+                    <button>Add Note</button>
                 </form>
             </div>
         );
