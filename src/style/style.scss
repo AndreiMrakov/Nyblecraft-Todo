@@ -1,0 +1,72 @@
+$hover_color: yellow;
+$filtered_color: red;
+$sync_color: blue;
+
+body {
+  font-family: -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.edit-note, .save-note, .delete-note, .edit-tag, .save-tag, .delete-tag, .tags-sync {
+  &::after {
+    cursor: pointer;
+    font-family: "fontawesome", sans-serif;
+    padding-left: 10px;
+    vertical-align: middle;
+  }
+}
+
+.edit-note, .edit-tag {
+  &::after {
+    content: '\f044';
+  }
+}
+
+.save-note, .save-tag {
+  &::after {
+    content: '\f0c7';
+  }
+}
+
+.delete-note, .delete-tag {
+  &::after {
+    content: '\f00d';
+    color: red;
+  }
+}
+
+.tags-container {
+  display: flex;
+  align-items: center;
+}
+
+.tag-container {
+  padding: 10px;
+
+  &:hover {
+    cursor: pointer;
+    background: $hover_color;
+  }
+}
+
+.tag-name.filtered {
+  background: $filtered_color;
+}
+
+.tags-sync::after {
+  content: '\f2f1';
+  color: $sync_color;
+}
+
+@font-face {
+  font-family: "fontawesome";
+  font-style: normal;
+  font-weight: 400;
+  font-display: auto;
+  src: url(font/fa-regular-400.eot);
+  src: url(font/fa-regular-400.eot?#iefix) format("embedded-opentype"),
+  url(font/fa-regular-400.woff2) format("woff2"),
+  url(font/fa-regular-400.woff) format("woff"),
+  url(font/fa-regular-400.ttf) format("truetype")
+}
