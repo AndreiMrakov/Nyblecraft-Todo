@@ -10,8 +10,14 @@ class TagList extends React.Component {
     render() {
         return (
             <div className='tags-container'>
-                {this.props.tags[0] && <span>Tags:</span>}
-                {this.props.tags.map(tag => tag.text && <SingleTag key={tag.text} tag={tag} update={this.props.update} delete={this.props.delete}/>)}
+                {this.props.tags[0] && <span>Tags: </span>}
+                {this.props.tags.map(tag => tag.text &&
+                    <SingleTag key={tag.text}
+                               tag={tag}
+                               update={this.props.update}
+                               delete={this.props.delete}
+                               filter={this.props.filter}
+                    />)}
             </div>
         );
     }

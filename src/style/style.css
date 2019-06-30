@@ -12,10 +12,9 @@ code {
     monospace;
 }
 
-.edit-note::after, .save-note::after, .delete-note::after, .edit-tag::after, .save-tag::after, .delete-tag::after {
+.edit-note::after, .save-note::after, .delete-note::after, .edit-tag::after, .save-tag::after, .delete-tag::after, .tags-sync::after {
     cursor: pointer;
     font-family: "fontawesome", sans-serif;
-    color: red;
     padding-left: 10px;
     vertical-align: middle;
 }
@@ -30,6 +29,7 @@ code {
 
 .delete-note::after, .delete-tag::after  {
     content: '\f00d';
+    color: red;
 }
 
 .tags-container {
@@ -37,15 +37,23 @@ code {
     align-items: center;
 }
 
-.tag-name {
+.tag-container {
     padding: 10px;
 }
 
-.tag-name:hover {
+.tag-container:hover {
     cursor: pointer;
     background: yellow;
 }
 
+.tag-name.filtered{
+    background: red;
+}
+
+.tags-sync::after {
+    content: '\f2f1';
+    color: blue;
+}
 @font-face {
     font-family: "fontawesome";
     font-style: normal;

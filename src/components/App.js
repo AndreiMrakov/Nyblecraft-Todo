@@ -9,22 +9,19 @@ class App extends React.Component {
         super(props);
         this.state = {
             notes: [],
-            filteredNotes: [],
+            filter: [],
+            filterNotes: [],
             tags: [],
             id: 0,
         };
     }
 
-    componentWillMount() {
-        // this.setState({filteredNotes: this.filterNotes()});
+    componentDidMount() {
+        // this.setState({filterNotes: [...this.state.notes]});
     }
 
-    // filterNotes = (tag = null) => {
-    //     return tag !== null ? [...this.state.notes].filter(note => note.tags.some(noteTag => tag.includes(noteTag))) : this.state.notes;
-    // };
-
     newNote = (note) => {
-        let noteTags = note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) !== null ? note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) : null;
+        let noteTags = note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) !== null ? note.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) : [];
         let notesCopy = [...this.state.notes];
         let newNote = {
             id: this.state.id + 1,
@@ -33,7 +30,7 @@ class App extends React.Component {
         };
         notesCopy.push(newNote);
 
-        if (noteTags !== null) {
+        if (noteTags.length) {
             let tagsCopy = [...this.state.tags];
             for (let i = 0; i < noteTags.length; i++) {
                 if (!tagsCopy.length) {
@@ -58,42 +55,72 @@ class App extends React.Component {
             }
             this.setState({tags: tagsCopy});
         }
-        this.setState({notes: notesCopy, id: this.state.id + 1});
+        this.setState({notes: notesCopy, filterNotes: notesCopy, id: this.state.id + 1});
     };
 
     deleteNote = (id) => {
         let notesCopy = [...this.state.notes];
+        let tagsCopy = [...this.state.tags];
         notesCopy.forEach((note, index) => {
             if (note.id === id) {
                 notesCopy.splice(index, 1);
-                this.setState({notes: notesCopy});
             }
         });
+        tagsCopy.forEach(tag => {
+            if (tag.owners.includes(id)) {
+                tag.owners.splice(tag.owners.indexOf(id), 1);
+            }
+        });
+        this.setState({notes: notesCopy, filterNotes: notesCopy, tags: tagsCopy});
     };
 
     editNote = (id, text) => {
         let notesCopy = [...this.state.notes];
+        let tagsCopy = [...this.state.tags];
+        let newNoteTags = text.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) !== null ? text.match(/(#[a-z0-9][a-z0-9\\-_]*)/ig) : [];
+        if (newNoteTags.length) {
+            this.newTag(newNoteTags, id);
+        } else {
+            tagsCopy.forEach(tag => {
+                if (tag.owners.includes(id)) {
+                    tag.owners.splice(tag.owners.indexOf(id), 1);
+                }
+            });
+        }
         notesCopy.forEach(note => {
             if (note.id === id) {
                 note.text = text;
-                this.setState({notes: notesCopy});
+                note.tags = newNoteTags;
+                // new filtered array if filter uses the same time as editing
+                let newFilteredNotes = [...notesCopy].filter(note => [...this.state.filter].every(tag => note.tags.includes(tag)));
+                this.setState({notes: notesCopy, filterNotes: newFilteredNotes});
             }
         });
+
     };
 
-    newTag = (tags) => {
-        let newTags = [];
+    newTag = (tags, owner) => {
+        console.log(`входящие теги заметки: ${tags}`);
+        let tagsCopy = [...this.state.tags];
         tags.forEach(tag => {
-            let tagsCopy = [...this.state.tags].map(tag => tag.text);
-           if(!tagsCopy.includes(tag)){
-               let newTag = {
-                   text: tag,
-                   owners: [],
-               };
-               newTags = [...newTags, newTag];
-           }
+            let tagsTextCopy = [...this.state.tags].map(t => t.text);
+            if (!tagsTextCopy.includes(tag)) {
+                let newTag = {
+                    text: tag,
+                    owners: owner !== undefined ? [owner] : [],
+                };
+                tagsCopy.push(newTag);
+                this.setState({tags: tagsCopy});
+            } else if (tagsTextCopy.includes(tag) && owner) {
+                tagsCopy.forEach(t => {
+                    if (t.text === tag && !t.owners.includes(owner)) {
+                        t.owners.push(owner);
+                        t.owners.sort();
+                        this.setState({tags: tagsCopy});
+                    }
+                });
+            }
         });
-        this.setState({tags: [...this.state.tags, ...newTags]});
     };
 
     deleteTag = (name) => {
@@ -109,20 +136,65 @@ class App extends React.Component {
     editTag = (oldText, newText) => {
         let tagsCopy = [...this.state.tags];
         tagsCopy.forEach(tag => {
-            if (tag.text === oldText) {
-                tag.text = newText;
+            if (newText === '') {
+                this.deleteTag(oldText);
+            } else if (tag.text === oldText) {
+                tag.text = newText.charAt(0) !== '#' ? `#${newText}` : newText;
                 this.setState({tags: tagsCopy});
             }
         });
+
     };
+
+    syncTags = () => {
+        let tagsCopy = [...this.state.tags];
+        [...this.state.notes].forEach(note => {
+            note.tags.forEach(tag => {
+                let tagsTextCopy = tagsCopy.map(t => t.text);
+
+                if (!tagsTextCopy.includes(tag)) {
+                    let newTag = {
+                        text: tag,
+                        owners: [note.id],
+                    };
+                    tagsCopy.push(newTag);
+                    this.setState({tags: tagsCopy.sort()});
+                } else {
+                    tagsCopy.forEach(t => {
+                        if (t.text === tag && !t.owners.includes(note.id)) {
+                            t.owners.push(note.id);
+                            t.owners.sort();
+                            this.setState({tags: tagsCopy.sort()});
+                        }
+                    });
+                }
+            });
+        });
+    };
+
+    filterNotes = (tag) => {
+        let filterCopy = [...this.state.filter];
+        filterCopy.includes(tag.text) ? filterCopy.splice(filterCopy.indexOf(tag.text), 1) : filterCopy.push(tag.text);
+        let newFilteredNotes = [...this.state.notes].filter(note => filterCopy.every(t => note.tags.includes(t)));
+        this.setState({filter: filterCopy, filterNotes: newFilteredNotes});
+    };
+
 
     render() {
         return (
             <div className='app-container'>
                 <AddNote pusher={this.newNote}/>
                 <AddTag pusher={this.newTag}/>
-                <TagList tags={this.state.tags} update={this.editTag} delete={this.deleteTag}/>
-                <NoteList notes={this.state.notes} update={this.editNote} delete={this.deleteNote} />
+                <TagList tags={this.state.tags}
+                         update={this.editTag}
+                         delete={this.deleteTag}
+                         filter={this.filterNotes}
+                />
+                <NoteList notes={this.state.filterNotes}
+                          update={this.editNote}
+                          delete={this.deleteNote}
+                          sync={this.syncTags}
+                />
             </div>
         );
     }

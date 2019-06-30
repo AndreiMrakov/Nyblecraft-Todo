@@ -19,6 +19,7 @@ class SingleNote extends React.Component {
     };
     handleChange = (e) => this.setState({newText: e.target.value});
 
+
     render() {
         return (
             <div className='note-container'>
