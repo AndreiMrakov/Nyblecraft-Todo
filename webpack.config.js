@@ -1,47 +1,4 @@
 const path = require('path');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// module.exports = {
-//     entry: path.join(__dirname + '/src/index.js'),
-//     output: {
-//         path: path.join(__dirname + "/public/"),
-//         filename: 'bundle.js'
-//     },
-//     module: {
-//         rules: [
-//             {
-//                 test: /\.jsx?$/,
-//                 exclude: /(node_modules)/,
-//                 loaders: ['babel-loader']
-//             },
-//             {
-//                 test: /\.scss$/,
-//                 use: [
-//                     'style-loader',
-//                     MiniCssExtractPlugin,
-//                     {
-//                         loader: "css-loader",
-//                         options: {sourceMap: true}
-//                     }, {
-//                         loader: "sass-loader",
-//                         options: {sourceMap: true}
-//                     }
-//                 ]
-//             },
-//             {
-//                 test: /\.css$/,
-//                 use: [
-//                     MiniCssExtractPlugin,
-//                     "css-loader",
-//                 ]
-//             },
-//
-//         ]
-//     },
-//     plugins: [
-//         new MiniCssExtractPlugin({filename: '[name].css'})
-//     ]
-// };
-
 module.exports = {
     entry: path.join(__dirname + '/src/index.js'),
     output: {
@@ -52,7 +9,7 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                exclude: /node_modules/,
+                exclude: [/node_modules/, /server/],
                 use: {
                     loader: 'babel-loader',
                     options: {
